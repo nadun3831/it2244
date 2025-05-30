@@ -1,0 +1,151 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<sys/wait.h>
+
+/*
+Program ex1:
+- Demonstrates sleep() and exit().
+- Program starts, sleeps for 3 seconds, then exits.
+
+Sample Output:
+Program started. 
+Sleeping for 3 seconds... 
+(3 sec pause)
+Exiting the program.
+*/
+
+void program_ex1(){
+    printf("Program started. \n");
+    printf("Sleeping for 3 seconds... \n");
+    sleep(3);
+    printf("Exiting the program. \n");
+    exit(0);
+}
+
+/*
+Program ex2:
+- Parent creates a child process.
+- Child sleeps for 2 sec then exits with status 0.
+- Parent waits for child and checks exit status.
+
+Sample Output:
+Parent process started. PID: 3201
+Parent waiting for child to finish...
+Child process. PID: 3202, Sleeping for 2 sec...
+(2 sec pause)
+Child process exiting.
+Child exited with status: 0
+Parent process ending.
+*/
+
+void program_ex2(){
+    pid_t pid;
+    printf("Parent process started. PID: %d\n", getpid());
+
+    pid = fork();
+
+    if(pid < 0){
+        perror("fork failed");
+        exit(1);
+    }
+
+    if(pid == 0){
+        printf("Child process. PID: %d, Sleeping for 2 sec...\n", getpid());
+        sleep(2);
+        printf("Child process exiting.\n");
+        exit(0);
+    }
+    else{
+        int status;
+        printf("Parent waiting for child to finish...\n");
+        wait(&status);
+        if(WIFEXITED(status)){
+            printf("Child exited with status: %d\n", WEXITSTATUS(status));
+        }
+        else{
+            printf("Child did not exit normally.\n");
+        }
+        printf("Parent process ending.\n");
+    }
+}
+
+/*
+Program ex3:
+- Parent creates two child processes.
+- 1st child sleeps 1 sec.
+- 2nd child sleeps 3 sec.
+- Parent waits for both to finish.
+
+Sample Output:
+Parent process started. PID: 3240
+Child process has started. Sleeping for 1 sec
+My PID: 3241
+My PPID: 3240
+Child process has started. Sleeping for 3 sec
+My PID: 3242
+My PPID: 3240
+(1 sec pause)
+Child process 01 exiting...
+(2 sec later)
+Child process 02 exiting...
+Parent process ending.
+*/
+
+void program_ex3(){
+    pid_t pid;
+    printf("Parent process started. PID: %d\n", getpid());
+
+    pid = fork();
+    if(pid < 0){
+        printf("Fork failed.\n");
+        return;
+    }
+    if(pid == 0){
+        printf("Child process has started. Sleeping for 1 sec\nMy PID: %d\nMy PPID: %d\n", getpid(), getppid());
+        sleep(1);
+        printf("Child process 01 exiting...\n");
+        return;
+    }
+    else{
+        pid_t pid2;
+        pid2 = fork();
+        if(pid2 < 0){
+            printf("Fork failed.\n");
+            return;
+        }
+        if(pid2 == 0){
+            printf("Child process has started. Sleeping for 3 sec\nMy PID: %d\nMy PPID: %d\n", getpid(), getppid());
+            sleep(3);
+            printf("Child process 02 exiting...\n");
+            return;
+        }
+        else{
+            wait(NULL);
+            wait(NULL);
+            printf("Parent process ending.\n");
+        }
+    }
+}
+
+//==============================
+// Main Menu to Select Program
+//==============================
+int main(){
+    int choice;
+    printf("\n=== Fork Process Exercises (Combined) ===\n");
+    printf("1. Program ex1 (sleep, exit)\n");
+    printf("2. Program ex2 (parent-child wait)\n");
+    printf("3. Program ex3 (two children sleep)\n");
+    printf("Choose a program to run (1-3): ");
+    scanf("%d", &choice);
+
+    switch(choice){
+        case 1: program_ex1(); break;
+        case 2: program_ex2(); break;
+        case 3: program_ex3(); break;
+        default: printf("Invalid choice!\n");
+    }
+
+    return 0;
+}
