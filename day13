@@ -1,0 +1,48 @@
+/*
+    Program: Pascal's Triangle Generator
+    Language: C
+    Author: [Your Name]
+    Description:
+        This program generates Pascal's Triangle up to a number of rows specified by the user.
+        Pascal's Triangle is a triangular array of binomial coefficients.
+        Each number is the sum of the two numbers directly above it.
+*/
+
+#include <stdio.h>
+
+// Function to calculate factorial of a number
+int factorial(int n) {
+    int f = 1;
+    for (int i = 1; i <= n; i++)
+        f *= i;
+    return f;
+}
+
+// Function to calculate nCr (combination)
+int combination(int n, int r) {
+    return factorial(n) / (factorial(r) * factorial(n - r));
+}
+
+int main() {
+    int rows, i, j, space;
+
+    // Get the number of rows from the user
+    printf("Enter number of rows: ");
+    scanf("%d", &rows);
+
+    // Loop through each row
+    for (i = 0; i < rows; i++) {
+        // Print leading spaces for alignment
+        for (space = 0; space < rows - i - 1; space++)
+            printf("  ");
+
+        // Print values in the row using nCr
+        for (j = 0; j <= i; j++)
+            printf("%4d", combination(i, j));
+
+        // Move to the next line after each row
+        printf("\n");
+    }
+
+    return 0;
+}
