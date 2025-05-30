@@ -1,0 +1,156 @@
+#include<stdio.h>
+#include<unistd.h>
+
+/*
+Program 01:
+This program uses fork() to create a child process.
+Both the parent and child processes print "Hello World!".
+
+Sample Output:
+Hello World!
+Hello World!
+*/
+
+void program01(){
+    fork();
+    printf("Hello World!\n");
+}
+
+
+/*
+Program 02:
+This program calls fork() twice.
+Each fork() doubles the number of processes.
+Total processes = 2^2 = 4
+Each process prints "Hello World!".
+
+Sample Output:
+Hello World!
+Hello World!
+Hello World!
+Hello World!
+*/
+
+void program02(){
+    fork();
+    fork();
+    printf("Hello World!\n");
+}
+
+
+/*
+Program 03:
+This program creates one child process using fork().
+The child prints "I'm the child!" and the parent prints "I'm the parent!".
+
+Sample Output:
+I'm the parent!
+I'm the child!
+(Or in reverse order depending on scheduling)
+*/
+
+void program03(){
+    int f = fork();
+    if(f==0){
+        printf("I'm the child!\n");
+    } else {
+        printf("I'm the parent!\n");
+    }
+}
+
+
+/*
+Program 04:
+This program creates a child process.
+- The child prints numbers 1 to 5 and their sum.
+- The parent prints numbers 6 to 10 and their sum.
+
+Sample Output:
+I'm the parent!
+6 7 8 9 10 
+Summation of parent process: 40
+I'm the child!
+1 2 3 4 5 
+Summation of child process: 15
+(Order may vary)
+*/
+
+void program04(){
+    int f = fork();
+    if(f==0){
+        printf("I'm the child!\n");
+        int csum=0;
+        for(int i=1; i<=5; i++){
+            printf("%d ", i);
+            csum+=i;
+        }
+        printf("\nSummation of child process: %d\n", csum);
+    } else {
+        printf("I'm the parent!\n");
+        int psum=0;
+        for(int i=6; i<=10; i++){
+            printf("%d ", i);
+            psum+=i;
+        }
+        printf("\nSummation of parent process: %d\n", psum);
+    }
+}
+
+
+/*
+Program 05:
+This program creates a child process.
+- The child starts from 1 and prints 5 numbers.
+- The parent starts from 6 and prints 5 numbers.
+Each calculates and prints their sum.
+
+Sample Output:
+1 2 3 4 5 
+Summation : 15
+6 7 8 9 10 
+Summation : 40
+(Order may vary)
+*/
+
+void program05(){
+    int n;
+    int f = fork();
+    if(f==0){
+        n = 1;
+    } else {
+        n = 6;
+    }
+    int sum=0;
+    for(int i=n; i<n+5; i++){
+        printf("%d ", i);
+        sum+=i;
+    }
+    printf("\nSummation : %d\n", sum);
+}
+
+
+//==============================
+// Main Menu to Select Program
+//==============================
+int main(){
+    int choice;
+    printf("\n=== Process Forking Programs ===\n");
+    printf("1. Program 01\n");
+    printf("2. Program 02\n");
+    printf("3. Program 03\n");
+    printf("4. Program 04\n");
+    printf("5. Program 05\n");
+    printf("Choose a program to run (1-5): ");
+    scanf("%d", &choice);
+
+    switch(choice){
+        case 1: program01(); break;
+        case 2: program02(); break;
+        case 3: program03(); break;
+        case 4: program04(); break;
+        case 5: program05(); break;
+        default: printf("Invalid choice!\n");
+    }
+
+    return 0;
+}
