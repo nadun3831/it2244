@@ -1,0 +1,20 @@
+Code:-
+		echo "Enter the word: "
+		read word
+
+		reverse=$(echo "$word" | rev)
+
+		if [ "$word" == "$reverse" ]; then
+			echo "It's a Palindrome."
+		else
+			echo "Not a Palindrome."
+		fi
+
+Output:-
+		[[nadun@nadun-PC ~]]$ touch palindrome.sh
+		[[nadun@nadun-PC ~]]$ vi palindrome.sh
+		[[nadun@nadun-PC ~]]$ chmod 777 palindrome.sh
+		[[nadun@nadun-PC ~]]$ ./palindrome.sh
+		Enter the word:
+		amma
+		It's a Palindrome.
