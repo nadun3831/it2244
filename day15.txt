@@ -1,0 +1,159 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<sys/wait.h>
+
+/*
+Program 01: (fork6)
+- Parent process gets A, B, C from user.
+- Child process calculates factorial of A.
+- Shows pids and ppids.
+
+Sample Output:
+I'm the parent!
+My pid is 3245
+Enter A: 5
+Enter B: 3
+Enter C: 2
+I'm the child!
+My ppid is 3245
+Factorial of 5 is 
+120
+*/
+
+int A,B,C;
+void program01(){
+    int f = fork();
+    if(f==0){
+        printf("I'm the child!\nMy ppid is %d\n",getppid());
+        int fac=1;
+        for(int i=1; i<=A; i++){
+            fac*=i;
+        }
+        printf("Factorial of %d is \n%d\n",A,fac);
+    }
+    else{
+        printf("I'm the parent!\nMy pid is %d\n",getpid());
+        printf("Enter A: ");
+        scanf("%d", &A);
+        printf("Enter B: ");
+        scanf("%d", &B);
+        printf("Enter C: ");
+        scanf("%d", &C);
+    }
+}
+
+
+/*
+Program 02: (fork7)
+- Process A reads A, B, C values.
+- Process B (child of A) calculates factorial of A.
+- Process C (another child of A) prints Fibonacci sequence up to C terms and checks if C is prime.
+
+Sample Output:
+I'm A
+My pid: 3247
+Enter A: 5
+Enter B: 3
+Enter C: 7
+
+I'm B
+My ppid: 3247
+My pid: 3248
+Factorial of 5 is: 120
+
+I'm C
+My ppid: 3247
+My pid: 3249
+0 1 1 2 3 5 8 
+7 is not a prime number.
+*/
+
+void program02(){
+    pid_t pidA = getpid();
+    printf("\nI'm A\n");
+    printf("My pid: %d\n", pidA);
+    printf("Enter A: ");
+    scanf("%d", &A);
+    printf("Enter B: ");
+    scanf("%d", &B);
+    printf("Enter C: ");
+    scanf("%d", &C);
+
+    pid_t f = fork();
+    if (f == 0) {
+        sleep(1);
+        printf("\nI'm B\n");
+        printf("My ppid: %d\n", getppid());
+        printf("My pid: %d\n", getpid());
+
+        // Factorial of A
+        int fac = 1;
+        for(int i=1; i<=A; i++){
+            fac*=i;
+        }
+        printf("Factorial of %d is: %d\n",A,fac);
+        return;
+    }
+
+    pid_t k = fork();
+    if (k == 0) {
+        sleep(2);
+        printf("\nI'm C\n");
+        printf("My ppid: %d\n", getppid());
+        printf("My pid: %d\n", getpid());
+
+        // Fibonacci of C
+        int x=0, y=1;
+        for(int i=1; i<=C; i++){
+            printf("%d ",x);
+            int z = x+y;
+            x = y;
+            y = z;
+        }
+        printf("\n");
+
+        // Check if C is prime
+        int isPrime = 1;
+        if (C <= 1) {
+            isPrime = 0;
+        } else {
+            for (int i = 2; i * i <= C; i++) {
+                if (C % i == 0) {
+                    isPrime = 0;
+                    break;
+                }
+            }
+        }
+
+        if (isPrime)
+            printf("%d is a prime number.\n", C);
+        else
+            printf("%d is not a prime number.\n", C);
+
+        return;
+    }
+
+    wait(NULL);
+    wait(NULL);
+}
+
+
+//==============================
+// Main Menu to Select Program
+//==============================
+int main(){
+    int choice;
+    printf("\n=== Fork Process Programs (Combined) ===\n");
+    printf("1. Program 01 (fork6)\n");
+    printf("2. Program 02 (fork7)\n");
+    printf("Choose a program to run (1-2): ");
+    scanf("%d", &choice);
+
+    switch(choice){
+        case 1: program01(); break;
+        case 2: program02(); break;
+        default: printf("Invalid choice!\n");
+    }
+
+    return 0;
+}
